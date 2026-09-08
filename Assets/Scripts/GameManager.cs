@@ -19,31 +19,50 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         UpdateScoreText();
-        GenerateOrder();
+    }
+
+    public void GenerateOrder()
+    {
+        currentCake = "Cupcake";
+
+        string[] flavors = { "Vanilla", "Chocolate" };
+        currentFlavor = flavors[Random.Range(0, flavors.Length)];
+
+        string[] toppings = { "Strawberry", "Blueberry" };
+        currentTopping = toppings[Random.Range(0, toppings.Length)];
+
+        orderText.text =
+            "ORDER\n\n" +
+            currentCake +
+            "\n\nCream:\n" +
+            currentFlavor +
+            "\n\nTopping:\n" +
+            currentTopping;
     }
 
     public void SelectCupcake()
     {
         selectedCake = "Cupcake";
-        Debug.Log("Player selected cake: " + selectedCake);
     }
 
     public void SelectVanilla()
     {
         selectedFlavor = "Vanilla";
-        Debug.Log("Player selected flavor: " + selectedFlavor);
     }
 
     public void SelectChocolate()
     {
         selectedFlavor = "Chocolate";
-        Debug.Log("Player selected flavor: " + selectedFlavor);
+    }
+
+    public void SelectStrawberry()
+    {
+        selectedTopping = "Strawberry";
     }
 
     public void SelectBlueberry()
     {
         selectedTopping = "Blueberry";
-        Debug.Log("Player selected topping: " + selectedTopping);
     }
 
     public void Serve()
@@ -54,11 +73,9 @@ public class GameManager : MonoBehaviour
         {
             score += 100;
             UpdateScoreText();
+            ResetSelection();
 
             Debug.Log("Perfect! Order completed! +100");
-
-            ResetSelection();
-            GenerateOrder();
         }
         else
         {
@@ -71,32 +88,10 @@ public class GameManager : MonoBehaviour
         scoreText.text = "Score: " + score;
     }
 
-    void GenerateOrder()
-    {
-        currentCake = "Cupcake";
-        string[] flavors = { "Vanilla", "Chocolate" };
-        currentFlavor = flavors[Random.Range(0, flavors.Length)];
-        string[] toppings = { "Strawberry", "Blueberry" };
-        currentTopping = toppings[Random.Range(0, toppings.Length)];
-
-        orderText.text =
-            "Order: " +
-            currentFlavor + " " +
-            currentTopping + " " +
-            currentCake;
-
-        Debug.Log("New order: " +
-                  currentFlavor + " " +
-                  currentTopping + " " +
-                  currentCake);
-    }
-
     void ResetSelection()
     {
         selectedCake = "";
         selectedFlavor = "";
         selectedTopping = "";
-
-        Debug.Log("Selection reset.");
     }
 }
