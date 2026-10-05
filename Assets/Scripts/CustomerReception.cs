@@ -9,6 +9,7 @@ public class CustomerReception : MonoBehaviour
     [SerializeField] private GameObject orderPanel;
     [SerializeField] private TMP_Text orderText;
     [SerializeField] private RectTransform waitingPoint;
+    [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private float itemInterval = 0.2f;
     [SerializeField] private float moveDuration = 0.5f;
     [SerializeField] private float orderScale = 0.45f;
@@ -91,6 +92,8 @@ public class CustomerReception : MonoBehaviour
         customerButton.interactable = false;
 
         int points = 6 - Mathf.FloorToInt(elapsed / 10f);
+        if (scoreManager != null)
+        scoreManager.AddScore(points);
         Debug.Log($"接待顾客：+{points} 分，等待 {elapsed:F1} 秒");
 
         StartCoroutine(RevealOrder());
@@ -186,6 +189,8 @@ public class CustomerReception : MonoBehaviour
     private void LeaveAngrily()
     {
         state = State.Left;
+        if (scoreManager != null)
+        scoreManager.AddScore(-10);
         Debug.Log("顾客生气离开：-10 分");
         gameObject.SetActive(false);
     }
