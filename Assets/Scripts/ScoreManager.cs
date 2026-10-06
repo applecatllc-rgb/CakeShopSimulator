@@ -4,7 +4,6 @@ using UnityEngine;
 public class ScoreManager : MonoBehaviour
 {
     [SerializeField] private TMP_Text scoreText;
-    private int score;
 
     private void Start()
     {
@@ -13,13 +12,13 @@ public class ScoreManager : MonoBehaviour
 
     public void AddScore(int amount)
     {
-        score += amount;
+        GameSession.AddScore(amount);
         RefreshDisplay();
     }
 
     private void RefreshDisplay()
     {
         if (scoreText != null)
-            scoreText.text = $"Score: {score}";
+            scoreText.text = $"Score: {GameSession.Score}";
     }
 }

@@ -17,6 +17,7 @@ public class OrderListManager : MonoBehaviour
 
     public void RegisterOrder(string content)
     {
+        GameSession.AddOrder(content);
         GameObject card = Instantiate(orderPrefab, orderGrid);
         card.SetActive(false);
 
