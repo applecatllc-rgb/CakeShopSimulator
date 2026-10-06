@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneNavigation : MonoBehaviour
 {
-    [SerializeField] private string nextSceneName = "Level2";
+    [SerializeField] private string nextSceneName = "Level1_Preparation";
 
     public void GoToNextScene()
     {

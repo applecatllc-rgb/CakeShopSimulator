@@ -1320,7 +1320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8ed374a1eb1e42009f46d2abe3ac0a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneNavigation
-  nextSceneName: Level2
+  nextSceneName: Level1_Preparation
 --- !u!1 &1328986361
 GameObject:
   m_ObjectHideFlags: 0
