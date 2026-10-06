@@ -23,6 +23,18 @@ public class CustomerReception : MonoBehaviour
     private RectTransform customerRect;
     private RectTransform orderRect;
     private float appearedAt;
+    private Vector2 compactOrderPosition = new Vector2(40f, -40f);
+    private OrderListManager orderListManager;
+
+    public void SetOrderListManager(OrderListManager manager)
+    {
+        orderListManager = manager;
+    }
+
+    public void SetOrderPosition(Vector2 position)
+    {
+        compactOrderPosition = position;
+    }
 
     private void Awake()
     {
@@ -62,7 +74,34 @@ public class CustomerReception : MonoBehaviour
 
         StopAllCoroutines();
     }
+    public bool ReceptionFinished =>
+    state == State.Queued || state == State.Left;
 
+
+    public void Initialize(
+        GameObject ownOrderPanel,
+        RectTransform ownWaitingPoint,
+        ScoreManager manager)
+    {
+        if (orderButton != null)
+            orderButton.onClick.RemoveListener(OnOrderClicked);
+
+        orderPanel = ownOrderPanel;
+        orderRect = orderPanel.GetComponent<RectTransform>();
+        orderButton = orderPanel.GetComponent<Button>();
+        orderText = orderPanel.GetComponentInChildren<TMP_Text>(true);
+
+        waitingPoint = ownWaitingPoint;
+        scoreManager = manager;
+
+        orderButton.onClick.AddListener(OnOrderClicked);
+        orderButton.interactable = false;
+        orderPanel.SetActive(false);
+
+        appearedAt = Time.time;
+        state = State.Waiting;
+        customerButton.interactable = true;
+    }
     private void Update()
     {
         if (state == State.Waiting && Time.time - appearedAt >= 60f)
@@ -93,7 +132,7 @@ public class CustomerReception : MonoBehaviour
 
         int points = 6 - Mathf.FloorToInt(elapsed / 10f);
         if (scoreManager != null)
-        scoreManager.AddScore(points);
+            scoreManager.AddScore(points);
         Debug.Log($"接待顾客：+{points} 分，等待 {elapsed:F1} 秒");
 
         StartCoroutine(RevealOrder());
@@ -125,6 +164,14 @@ public class CustomerReception : MonoBehaviour
 
     private void OnOrderClicked()
     {
+        if (state == State.Queued)
+        {
+            if (orderListManager != null)
+                orderListManager.Show();
+
+            return;
+        }
+
         if (state != State.OrderReady) return;
 
         state = State.Moving;
@@ -145,7 +192,7 @@ public class CustomerReception : MonoBehaviour
         orderRect.position = originalOrderPosition;
 
         Vector2 orderStart = orderRect.anchoredPosition;
-        Vector2 orderTarget = new Vector2(40f, -40f);
+        Vector2 orderTarget = compactOrderPosition;
 
         Vector3 customerStart = customerRect.localPosition;
         Vector3 customerTarget =
@@ -183,6 +230,13 @@ public class CustomerReception : MonoBehaviour
         customerRect.localScale = Vector3.one * customerScale;
 
         state = State.Queued;
+        orderButton.interactable = true;
+
+        // 最新收起的订单盖到旧订单上方。
+        orderRect.SetAsLastSibling();
+
+        if (orderListManager != null)
+            orderListManager.RegisterOrder(orderText.text);
         Debug.Log("订单已收起，顾客进入等候区。");
     }
 
@@ -190,7 +244,7 @@ public class CustomerReception : MonoBehaviour
     {
         state = State.Left;
         if (scoreManager != null)
-        scoreManager.AddScore(-10);
+            scoreManager.AddScore(-10);
         Debug.Log("顾客生气离开：-10 分");
         gameObject.SetActive(false);
     }
